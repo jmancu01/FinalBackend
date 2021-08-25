@@ -1,40 +1,36 @@
 import {Request, Response} from 'express'
-import { adminProducts } from '../memoria/product'
 
-let productList = [
+let cartItems = [
     {id: 1, nombre: 'lapiz', precio: 200},
     {id: 2, nombre: 'perro', precio: 300},
     {id: 3, nombre: 'parlante', precio: 400}
 ]
-let contador = 3
 
 
-class Product{
-    constructor(){
+class Cart{
 
-    }
     // VER LA LISTA DE PRODUCTOS O UN ID PARTICULAR
-    getProduct(req: Request, res: Response){
+    getItems(req: Request, res: Response){
         //se obtiene el id por prams
         const {id} = req.query
         
         if(id){
             //busco si existe el product con ese id
-            const product = adminProducts.find(Number(id))
+            const item = cartItems.find(oneProduct => oneProduct.id === Number(id))
             //si no existe le mando el error
-            if(!product){
+            if(!item){
                 return res.status(404).json({
                     msg: 'Producto no encontrado'
                 })
             }
             //si existe le mando el producto
             return res.json({
-                data: product
+                data: item
             })
         }else{
             //si no manda ahi le mando 
             return res.json({
-                data: adminProducts.get()
+                data: cartItems
             })
         }
     }
@@ -42,9 +38,9 @@ class Product{
     // AGREGAR UN PRODUCTO
     addProduct(req: Request, res: Response){
         //que nos pasen el nombre y precio por body
-        const {nombre, precio} = req.body
+        const {id, nombre, precio} = req.body
         //por si no pasa precio nombre o no cumplen con sus tipos
-        if(!precio || !nombre || typeof nombre !== 'string' || isNaN(precio)){
+        if(!precio || !nombre || !id || typeof nombre !== 'string' || isNaN(precio) || isNaN(id)){
             res.status(400).json(
                 {
                     msg: 'lee la docu pibe'
@@ -52,58 +48,27 @@ class Product{
             )
         }
         const newItem = {
-            id: Number(contador + 1),
+            id: Number(id),
             nombre: nombre,
             precio: Number(precio)
         }
 
-        const data = adminProducts.add(newItem)
+        cartItems.push(newItem)
 
         res.json({
             msg: 'Producto fue agregado',
-            data: data
+            data: newItem
         })
     }
 
-    updateProduct(req: Request, res: Response){
-        const {id} = req.params
-        const {nombre, precio} = req.body
-
-        if(id){
-            //busco si existe el product con ese id
-            const product = adminProducts.find(Number(id))
-            //si no existe le mando el error
-            if(!product){
-                return res.status(404).json({
-                    msg: 'Producto no encontrado'
-                })
-            }
-            const data = {
-                nombre: nombre,
-                precio: precio
-            }
-            //si existe lo borro
-            adminProducts.update(Number(id), data)
-            
-            return res.json({
-                msg: 'El producto fue modificado con exito',
-                data: adminProducts.get()
-            })
-        }else{
-            //si no manda ahi le mando 
-            return res.json({
-                msg: 'ingrese el id que desea eliminar'
-            })
-        }
-        
-    }
+    
     deleteProduct(req: Request, res: Response){
 
         const {id} = req.query
         
         if(id){
             //busco si existe el product con ese id
-            const product = adminProducts.find(Number(id))
+            const product = cartItems.find(oneProduct => oneProduct.id === Number(id))
             //si no existe le mando el error
             if(!product){
                 return res.status(404).json({
@@ -111,9 +76,10 @@ class Product{
                 })
             }
             //si existe lo borro
-            adminProducts.delete(Number(id))
+            cartItems = cartItems.filter(oneProduct => oneProduct.id !== Number(id))
             return res.json({
-                data: adminProducts.get()
+                
+                data: cartItems
             })
         }else{
             //si no manda ahi le mando 
@@ -125,4 +91,4 @@ class Product{
     
 }
 
-export const productController = new Product()
+export const cartController = new Cart()

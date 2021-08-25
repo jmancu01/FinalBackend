@@ -1,14 +1,15 @@
 import { Router, Request, Response } from "express";
 import { productController } from "../controllers/product";
+import { isAdmin } from "../middleware/admin";
 
 const router = Router();
 
-router.get('/', productController.getAllProduct)
+router.get('/', productController.getProduct)
 
-router.post('/', productController.addProduct)
+router.post('/', isAdmin, productController.addProduct)
 
-router.put('/',  productController.updateProduct)
+router.put('/:id', isAdmin,  productController.updateProduct)
 
-router.delete('/', productController.deleteProduct)
+router.delete('/', isAdmin, productController.deleteProduct)
 
 export default router
