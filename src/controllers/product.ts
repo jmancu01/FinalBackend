@@ -1,12 +1,5 @@
 import {Request, Response} from 'express'
-import { adminProducts } from '../memoria/product'
-
-let productList = [
-    {id: 1, nombre: 'lapiz', precio: 200},
-    {id: 2, nombre: 'perro', precio: 300},
-    {id: 3, nombre: 'parlante', precio: 400}
-]
-let contador = 3
+import { adminProducts, contador } from '../memoria/product'
 
 
 class Product{

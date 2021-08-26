@@ -1,10 +1,7 @@
 import {Request, Response} from 'express'
+import { adminProducts } from '../memoria/product'
 
-let cartItems = [
-    {id: 1, nombre: 'lapiz', precio: 200},
-    {id: 2, nombre: 'perro', precio: 300},
-    {id: 3, nombre: 'parlante', precio: 400}
-]
+let cartItems: any[] = []
 
 
 class Cart{
@@ -12,46 +9,18 @@ class Cart{
     // VER LA LISTA DE PRODUCTOS O UN ID PARTICULAR
     getItems(req: Request, res: Response){
         //se obtiene el id por prams
-        const {id} = req.query
-        
-        if(id){
-            //busco si existe el product con ese id
-            const item = cartItems.find(oneProduct => oneProduct.id === Number(id))
-            //si no existe le mando el error
-            if(!item){
-                return res.status(404).json({
-                    msg: 'Producto no encontrado'
-                })
-            }
-            //si existe le mando el producto
-            return res.json({
-                data: item
-            })
-        }else{
-            //si no manda ahi le mando 
-            return res.json({
-                data: cartItems
-            })
-        }
+        return res.json({
+            data: cartItems
+        })
     }
 
     // AGREGAR UN PRODUCTO
     addProduct(req: Request, res: Response){
         //que nos pasen el nombre y precio por body
-        const {id, nombre, precio} = req.body
+        const {id} = req.params
         //por si no pasa precio nombre o no cumplen con sus tipos
-        if(!precio || !nombre || !id || typeof nombre !== 'string' || isNaN(precio) || isNaN(id)){
-            res.status(400).json(
-                {
-                    msg: 'lee la docu pibe'
-                }
-            )
-        }
-        const newItem = {
-            id: Number(id),
-            nombre: nombre,
-            precio: Number(precio)
-        }
+
+        const newItem = adminProducts.find(Number(id))
 
         cartItems.push(newItem)
 
@@ -84,7 +53,7 @@ class Cart{
         }else{
             //si no manda ahi le mando 
             return res.json({
-                msg: 'ingrese el id que desea eliminar'
+                msg: 'ingrese el id del item que desea eliminar'
             })
         }
     }

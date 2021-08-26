@@ -3,7 +3,7 @@ let productList = [
     { id: 2, nombre: 'lapiz2', precio: 250 },
     { id: 3, nombre: 'lapiz3', precio: 260 },
 ];
-let contador = 3
+export let contador = 3
 
 class Productos {
   find(id: number){
