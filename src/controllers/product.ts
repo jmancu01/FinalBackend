@@ -1,19 +1,19 @@
 import {Request, Response} from 'express'
-import { adminProducts, contador } from '../memoria/product'
-
+import { adminProducts } from '../memoria/product'
+import { mySQLDB} from '../services/db'
 
 class Product{
     constructor(){
 
     }
     // VER LA LISTA DE PRODUCTOS O UN ID PARTICULAR
-    getProduct(req: Request, res: Response){
+    async getProduct(req: Request, res: Response){
         //se obtiene el id por prams
         const {id} = req.query
         
         if(id){
             //busco si existe el product con ese id
-            const product = adminProducts.find(Number(id))
+            const product = await mySQLDB.from('productos').where({ id: id }).select();
             //si no existe le mando el error
             if(!product){
                 return res.status(404).json({
@@ -25,19 +25,20 @@ class Product{
                 data: product
             })
         }else{
+            const data = await mySQLDB.from('productos').select();
             //si no manda ahi le mando 
             return res.json({
-                data: adminProducts.get()
+                data: data
             })
         }
     }
 
     // AGREGAR UN PRODUCTO
-    addProduct(req: Request, res: Response){
+    async addProduct(req: Request, res: Response){
         //que nos pasen el nombre y precio por body
-        const {nombre, precio} = req.body
+        const {nombre, rating, city, img, type, lenguaje, food} = req.body
         //por si no pasa precio nombre o no cumplen con sus tipos
-        if(!precio || !nombre || typeof nombre !== 'string' || isNaN(precio)){
+        if(!nombre || typeof nombre !== 'string'){
             res.status(400).json(
                 {
                     msg: 'lee la docu pibe'
@@ -45,12 +46,16 @@ class Product{
             )
         }
         const newItem = {
-            id: Number(contador + 1),
-            nombre: nombre,
-            precio: Number(precio)
-        }
+            name: nombre,
+            rating: rating,
+            city: city,
+            img: img,
+            type: type,
+            lenguaje: lenguaje,
+            food: food
+        };
 
-        const data = adminProducts.add(newItem)
+        const data = await adminProducts.add(newItem)
 
         res.json({
             msg: 'Producto fue agregado',
@@ -58,29 +63,38 @@ class Product{
         })
     }
 
-    updateProduct(req: Request, res: Response){
+    async updateProduct(req: Request, res: Response){
         const {id} = req.params
-        const {nombre, precio} = req.body
+        const {nombre, rating, city, img, type, lenguaje, food} = req.body
 
         if(id){
             //busco si existe el product con ese id
-            const product = adminProducts.find(Number(id))
+            const product = await mySQLDB.from('productos').select();
+
             //si no existe le mando el error
             if(!product){
                 return res.status(404).json({
                     msg: 'Producto no encontrado'
                 })
             }
-            const data = {
-                nombre: nombre,
-                precio: precio
-            }
+            const newItem = {
+                name: nombre,
+                rating: rating,
+                city: city,
+                img: img,
+                type: type,
+                lenguaje: lenguaje,
+                food: food
+            };
+
             //si existe lo borro
-            adminProducts.update(Number(id), data)
-            
+            const update = await adminProducts.update(Number(id), newItem)
+            const newList = await mySQLDB.from('productos').select();
+
             return res.json({
                 msg: 'El producto fue modificado con exito',
-                data: adminProducts.get()
+                data: newList,
+                update: update
             })
         }else{
             //si no manda ahi le mando 
@@ -90,13 +104,13 @@ class Product{
         }
         
     }
-    deleteProduct(req: Request, res: Response){
+    async deleteProduct(req: Request, res: Response){
 
         const {id} = req.query
         
         if(id){
             //busco si existe el product con ese id
-            const product = adminProducts.find(Number(id))
+            const product = await mySQLDB.from('productos').select();
             //si no existe le mando el error
             if(!product){
                 return res.status(404).json({
@@ -104,9 +118,9 @@ class Product{
                 })
             }
             //si existe lo borro
-            adminProducts.delete(Number(id))
+            const data = await adminProducts.delete(Number(id))
             return res.json({
-                data: adminProducts.get()
+                data: data
             })
         }else{
             //si no manda ahi le mando 
