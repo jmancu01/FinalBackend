@@ -36,9 +36,9 @@ class Product{
     // AGREGAR UN PRODUCTO
     async addProduct(req: Request, res: Response){
         //que nos pasen el nombre y precio por body
-        const {nombre, rating, city, img, type, lenguaje, food} = req.body
+        const {name, rating, city, img, type, lenguaje, food} = req.body
         //por si no pasa precio nombre o no cumplen con sus tipos
-        if(!nombre || typeof nombre !== 'string'){
+        if(!name || typeof name !== 'string'){
             res.status(400).json(
                 {
                     msg: 'lee la docu pibe'
@@ -46,7 +46,7 @@ class Product{
             )
         }
         const newItem = {
-            name: nombre,
+            name: name,
             rating: rating,
             city: city,
             img: img,
