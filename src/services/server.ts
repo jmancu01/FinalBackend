@@ -2,10 +2,11 @@ import express from 'express'
 import path from 'path'
 import * as http from 'http'
 import apiRouter from '../routes/index'
+import cors from 'cors'
 
 //llamo a express
 const app = express()
-
+app.use(cors())
 //seteo la public folder como la principal (cuando llame a la ruta y busque un archivo va a ser apartir de esta [localhost:8080/hola.txt] = public/hola.txt)
 const publicFolderPath = path.resolve(__dirname, '../../public')
 app.use(express.static(publicFolderPath))
