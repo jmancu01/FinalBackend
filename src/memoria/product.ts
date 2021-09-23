@@ -1,11 +1,7 @@
-let productList = [
-    { id: 1, nombre: 'lapiz', precio: 200 },
-    { id: 2, nombre: 'lapiz2', precio: 250 },
-    { id: 3, nombre: 'lapiz3', precio: 260 },
-];
-export let contador = 3
+import { mySQLDB } from "../services/db";
 
 class Productos {
+<<<<<<< HEAD
   find(id: any){
     return productList.find((aProduct) => aProduct.id === (id));
   }
@@ -15,36 +11,37 @@ class Productos {
       return productList.filter((aProduct) => aProduct.id === id);
     }
     return productList;
+=======
+  find(id: number){
+    
+  }
+
+  get(id?: number) {
+    
+>>>>>>> e0fc7a329a7f41658ca7acfc15f5c163e496b993
   }
 
   add(data: any) {
     const newItem = {
-      id: contador + 1,
-      nombre: data.nombre,
-      precio: data.precio,
+      name: data.nombre,
+      rating: data.rating,
+      city: data.city,
+      img: data.img,
+      type: data.type,
+      lenguaje: data.lenguaje,
+      food: data.food
     };
 
-    productList.push(newItem);
-    contador++
-
-    return newItem;
+    return mySQLDB('productos').insert(newItem);
   }
 
   update(id: number, data: any){
-
-    productList.map((element)=>{
-
-      if(element.id === Number(id)){
-          element.nombre = data.nombre
-          element.precio = Number(data.precio)
-      }
-  })
+    return mySQLDB.from('productos').where({ id }).update(data);  
   }
 
   delete(id: number) {
-    productList = productList.filter((aProduct) => aProduct.id !== id);
-    return productList;
+    return mySQLDB.from('productos').where({ id }).del();
   }
 }
 
-  export const adminProducts = new Productos();
+export const adminProducts = new Productos();
