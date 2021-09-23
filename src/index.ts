@@ -1,5 +1,6 @@
-import {myServer} from './services/server'
+import {myServer} from './services/server';
+import Config from './config';
 
-const port = 8080 || process.env.PORT
+const puerto = Config.PORT;
 
-myServer.listen(port, () => console.log(`Listening in port: ${port}`))
+myServer.listen(puerto, () => console.log(`Server up puerto ${puerto}`));

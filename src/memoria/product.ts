@@ -6,11 +6,11 @@ let productList = [
 export let contador = 3
 
 class Productos {
-  find(id: number){
-    return productList.find((aProduct) => aProduct.id === Number(id));
+  find(id: any){
+    return productList.find((aProduct) => aProduct.id === (id));
   }
 
-  get(id?: number) {
+  get(id?: any) {
     if (id) {
       return productList.filter((aProduct) => aProduct.id === id);
     }

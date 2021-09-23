@@ -1,4 +1,4 @@
-import {Request, Response} from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { adminProducts, contador } from '../memoria/product'
 
 
@@ -31,6 +31,31 @@ class Product{
             })
         }
     }
+
+    async checkProductExist(req: Request, res: Response, next: NextFunction){
+        //que nos pasen el nombre y precio por body
+        const id = req.params.id;
+        const producto = await adminProducts.find(id);
+
+        if (!producto) {
+            return res.status(404).json({
+                msg: 'producto not found',
+            });
+        }
+        next();
+    }
+
+    async checkAddProducts(req: Request, res: Response, next: NextFunction) {
+    const { nombre, precio } = req.body;
+
+    if (!nombre || !precio || typeof nombre !== 'string' || isNaN(precio)) {
+      return res.status(400).json({
+        msg: 'Campos del body invalidos',
+      });
+    }
+
+    next();
+  }
 
     // AGREGAR UN PRODUCTO
     addProduct(req: Request, res: Response){
